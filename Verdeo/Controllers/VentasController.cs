@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VerdeoVentas.Models;
+using VerdeoVentas.Enums;
 using System.Collections.Generic;
 
 namespace VerdeoVentas.Controllers
@@ -8,8 +9,8 @@ namespace VerdeoVentas.Controllers
     {
         private static List<Venta> ventas = new List<Venta>
         {
-            new Venta { Id = 1, Articulo = "Producto 1", Descripcion = "Descripción 1", Precio = 100, Cantidad = 2, PagoTotal = 200, FechaVenta = DateTime.Now },
-            new Venta { Id = 2, Articulo = "Producto 2", Descripcion = "Descripción 2", Precio = 150, Cantidad = 1, PagoTotal = 150, FechaVenta = DateTime.Now }
+            new Venta { Id = 1, Cliente = "Joaquin Pavone", Pedido = "1 docena de soja", Precio = 8500, Pago = true, TipoDePago = TipoDePago.Efectivo, FechaVenta = DateTime.Now, Envio = false, Total = 8500 },
+            new Venta { Id = 2, Cliente = "Candela Pepe", Pedido = "x3 paquetes de milanesas", Precio = 9500, Pago = false, TipoDePago = TipoDePago.Transferencia, FechaVenta = DateTime.Now, Envio = true, Total = 10000 }
         };
 
         public IActionResult Index()
@@ -17,19 +18,22 @@ namespace VerdeoVentas.Controllers
             return View(ventas);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         public IActionResult Create(Venta venta)
         {
-            Console.WriteLine("Método Create llamado");
             if (ModelState.IsValid)
             {
-                Console.WriteLine("Modelo válido");
+                //autoincrementar ID
+                venta.Id = ventas.Count > 0 ? ventas.Max(v => v.Id) + 1 : 1;
                 ventas.Add(venta);
                 return RedirectToAction("Index");
             }
-            Console.WriteLine("Modelo no válido");
             return View(venta);
         }
-
     }
 }
